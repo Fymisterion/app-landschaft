@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kopf · Körper · Können</title>
+<meta name="description" content="Drei kleine Android-Apps, die zusammenarbeiten: Kopffrei, Eigengewicht und Microstakes Coach. Offline, ohne Konto, ohne Werbung.">
+<style>
+  @font-face { font-family: "Bricolage Grotesque"; font-weight: 600 800; font-display: swap; src: url(fonts/BricolageGrotesque_800ExtraBold.ttf) format("truetype"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url(fonts/IBMPlexMono_600SemiBold.ttf) format("truetype"); }
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 400; font-display: swap; src: url(fonts/IBMPlexSans_400Regular.ttf) format("truetype"); }
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 500 600; font-display: swap; src: url(fonts/IBMPlexSans_600SemiBold.ttf) format("truetype"); }
+  :root {
+    --bg: #F5F4F0; --surface: #FFFFFF; --text: #17181C; --muted: #5D6068; --border: #E2E0D9;
+    --kopf: #4F46E5; --koerper: #E8541E; --koennen: #1F6B4A;
+    --kopf-soft: #EEF0FF; --koerper-soft: #FDEEE7; --koennen-soft: #E6F2EC;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1013; --surface: #171A1F; --text: #ECEDEF; --muted: #9EA2AB; --border: #2A2E35;
+      --kopf: #A5B4FC; --koerper: #FF8A5B; --koennen: #6FCF9F;
+      --kopf-soft: #1E2140; --koerper-soft: #3A1E14; --koennen-soft: #13291F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E1013; --surface: #171A1F; --text: #ECEDEF; --muted: #9EA2AB; --border: #2A2E35;
+    --kopf: #A5B4FC; --koerper: #FF8A5B; --koennen: #6FCF9F;
+    --kopf-soft: #1E2140; --koerper-soft: #3A1E14; --koennen-soft: #13291F;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 400 17px/1.6 "IBM Plex Sans", system-ui, sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 56px 16px 40px; }
+  h1, h2, h3 { font-family: "Bricolage Grotesque", system-ui, sans-serif; line-height: 1.1; margin: 0; }
+  h1 { font-size: clamp(40px, 8vw, 76px); font-weight: 800; letter-spacing: -0.02em; }
+  h1 .dot { color: var(--muted); font-weight: 600; }
+  h1 .a { color: var(--kopf); } h1 .b { color: var(--koerper); } h1 .c { color: var(--koennen); }
+  h2 { font-size: 30px; font-weight: 800; margin: 72px 0 20px; }
+  h3 { font-size: 24px; font-weight: 800; }
+  .lead { font-size: 20px; color: var(--muted); max-width: 640px; margin: 20px 0 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .pill { border: 1px solid var(--border); border-radius: 999px; padding: 4px 14px; font-size: 14px; font-weight: 500; background: var(--surface); }
+  .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 48px; }
+  .app { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px; border-top: 6px solid var(--accent); }
+  .app.kopf { --accent: var(--kopf); --soft: var(--kopf-soft); }
+  .app.koerper { --accent: var(--koerper); --soft: var(--koerper-soft); }
+  .app.koennen { --accent: var(--koennen); --soft: var(--koennen-soft); }
+  .role { font: 500 13px "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+  .app p { margin: 0; color: var(--muted); }
+  .app ul { margin: 0; padding-left: 18px; font-size: 15px; }
+  .actions { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .btn { display: inline-block; text-decoration: none; font-weight: 600; font-size: 15px; padding: 10px 16px; border-radius: 12px; background: var(--accent); color: var(--surface); }
+  .btn.ghost { background: var(--soft); color: var(--accent); }
+  .soon { font-size: 14px; color: var(--muted); background: var(--soft); border-radius: 12px; padding: 10px 14px; }
+  .meta { font: 500 12px "IBM Plex Mono", monospace; color: var(--muted); }
+  .links { display: grid; gap: 12px; }
+  .link { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px; }
+  .flow { font: 500 14px "IBM Plex Mono", monospace; white-space: nowrap; }
+  .flow .k { color: var(--kopf); } .flow .e { color: var(--koerper); } .flow .m { color: var(--koennen); }
+  .link p { margin: 0; }
+  .state { font: 500 12px "IBM Plex Mono", monospace; color: var(--muted); grid-column: 2; }
+  .state.live { color: var(--koennen); }
+  .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .rule { border-left: 3px solid var(--border); padding: 4px 0 4px 16px; }
+  .rule strong { display: block; font-family: "Bricolage Grotesque", sans-serif; font-size: 19px; }
+  .rule span { color: var(--muted); font-size: 15px; }
+  ol.steps { padding-left: 20px; margin: 0; } ol.steps li { margin-bottom: 8px; }
+  code { font: 500 0.88em "IBM Plex Mono", monospace; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; overflow-wrap: anywhere; }
+  footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+  a { color: inherit; }
+  @media (max-width: 560px) {
+    main { padding-top: 32px; }
+    .link { grid-template-columns: 1fr; }
+    .state { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1><span class="a">Kopf</span> <span class="dot">·</span> <span class="b">Körper</span> <span class="dot">·</span> <span class="c">Können</span></h1>
+  <p class="lead">Drei kleine Android-Apps, die jede für sich funktionieren und zusammen ein persönliches System ergeben: organisieren, trainieren, dazulernen.</p>
+  <div class="pills">
+    <span class="pill">offline</span><span class="pill">kein Konto</span><span class="pill">kein Server</span><span class="pill">keine Werbung</span><span class="pill">Deutsch</span>
+  </div>
+
+  <section class="apps" aria-label="Die Apps">
+    <article class="app kopf">
+      <span class="role">Kopf · die Drehscheibe</span>
+      <h3>Kopffrei</h3>
+      <p>To-Dos und Gewohnheiten, schnell per Sprache erfasst, mit verlässlichen Erinnerungen.</p>
+      <ul>
+        <li>Sprach-Eingang per Verknüpfung</li>
+        <li>Erinnerungen mit Knopf „Starten“</li>
+        <li>Anbindung an Claude Desktop (MCP, im WLAN)</li>
+      </ul>
+      <div class="actions">
+        <a class="btn" href="https://github.com/Fymisterion/app-landschaft/releases/download/kopffrei-v1.0.0/Kopffrei.apk">APK laden · 1,6 MB</a>
+      </div>
+      <span class="meta">Version 1.0.0 · ab Android 8</span>
+    </article>
+
+    <article class="app koerper">
+      <span class="role">Körper · trainieren</span>
+      <h3>Eigengewicht</h3>
+      <p>Calisthenics ohne Geräte: Pläne bauen, Training live mitzählen, Fortschritt sehen.</p>
+      <ul>
+        <li>14 Übungen in 3D, drehbar</li>
+        <li>Sätze, Wiederholungen und Haltezeiten</li>
+        <li>Trainingstage als Erinnerung in Kopffrei</li>
+      </ul>
+      <div class="actions">
+        <span class="soon">In Entwicklung – die APK folgt.</span>
+      </div>
+    </article>
+
+    <article class="app koennen">
+      <span class="role">Können · üben</span>
+      <h3>Microstakes Coach</h3>
+      <p>Poker gezielt lernen und ehrlich messen: Preflop-Trainer, Mathe-Kurse, Sessions und Bankroll.</p>
+      <ul>
+        <li>Lektionen und Quiz, Deutsch und Englisch</li>
+        <li>Session- und Bankroll-Tracking</li>
+        <li>Kapitel „Verantwortungsvoll spielen“</li>
+      </ul>
+      <div class="actions">
+        <a class="btn" href="https://fymisterion.github.io/microstakes-coach/">Im Browser öffnen</a>
+        <a class="btn ghost" href="https://fymisterion.github.io/microstakes-coach-datenschutz/">Datenschutz</a>
+      </div>
+    </article>
+  </section>
+
+  <h2>So arbeiten die Apps zusammen</h2>
+  <div class="links">
+    <div class="link">
+      <span class="flow"><span class="e">Eigengewicht</span> → <span class="k">Kopffrei</span></span>
+      <p>Trainingstage eines Plans werden auf Wunsch als Aufgaben mit Erinnerung angelegt.</p>
+      <span class="state live">● verfügbar</span>
+    </div>
+    <div class="link">
+      <span class="flow"><span class="k">Kopffrei</span> → <span class="e">Eigengewicht</span></span>
+      <p>Die Erinnerung hat einen Knopf „Starten“, der das Training direkt öffnet.</p>
+      <span class="state live">● verfügbar</span>
+    </div>
+    <div class="link">
+      <span class="flow"><span class="e">Eigengewicht</span> → <span class="k">Kopffrei</span></span>
+      <p>Nach dem Training wird die Aufgabe des Tages automatisch abgehakt.</p>
+      <span class="state live">● verfügbar</span>
+    </div>
+    <div class="link">
+      <span class="flow"><span class="m">Microstakes</span> → <span class="e">Eigengewicht</span></span>
+      <p>Nach langen Sessions schlägt der Coach eine 5-Minuten-Bewegungspause vor.</p>
+      <span class="state">○ geplant</span>
+    </div>
+    <div class="link">
+      <span class="flow">alle → <span class="k">Kopffrei</span></span>
+      <p>Sonntags ein Wochenrückblick mit Trainings, Poker-Sessions und erledigten Aufgaben.</p>
+      <span class="state">○ geplant</span>
+    </div>
+  </div>
+
+  <h2>Gemeinsame Regeln</h2>
+  <div class="rules">
+    <div class="rule"><strong>Deine Daten bleiben bei dir</strong><span>Alles liegt auf dem Gerät. Sicherungen sind einfache JSON-Dateien.</span></div>
+    <div class="rule"><strong>Verbindungen sind sichtbar</strong><span>Eine App öffnet die andere nur, wenn du es auslöst – mit Rückfrage.</span></div>
+    <div class="rule"><strong>Jede App steht für sich</strong><span>Keine braucht die anderen. Zusammen werden sie nur besser.</span></div>
+  </div>
+
+  <h2>APK installieren</h2>
+  <ol class="steps">
+    <li>Auf dem Android-Handy den Download-Knopf oben antippen.</li>
+    <li>Die Datei öffnen und das Installieren aus dieser Quelle einmalig erlauben.</li>
+    <li>In den Android-Einstellungen für Kopffrei „Alarme &amp; Erinnerungen“ erlauben, damit Erinnerungen pünktlich kommen.</li>
+  </ol>
+  <p class="meta" style="margin-top:16px">SHA-256 Kopffrei.apk: <code>73430184f7d18282cacd47dfafb20c154c49807fa0cc939cae5603226f043904</code></p>
+
+  <footer>Kopf · Körper · Können – privates Projekt. Keine Analyse, keine Cookies, keine fremden Server auf dieser Seite. Schriften: Bricolage Grotesque und IBM Plex (SIL Open Font License).</footer>
+</main>
+</body>
+</html>
