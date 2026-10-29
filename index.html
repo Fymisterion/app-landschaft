@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kopf · Körper · Können</title>
-<meta name="description" content="Drei kleine Android-Apps, die zusammenarbeiten: Kopffrei, Eigengewicht und Microstakes Coach. Offline, ohne Konto, ohne Werbung – Kopffrei auf Wunsch mit Claude verbunden.">
+<meta name="description" content="Vier kleine Android-Apps, die zusammenarbeiten: Kopffrei, Eigengewicht, Teller und Microstakes Coach. Offline, ohne Konto, ohne Werbung – auf Wunsch mit Claude verbunden.">
 <style>
   @font-face { font-family: "Bricolage Grotesque"; font-weight: 600 800; font-display: swap; src: url(fonts/BricolageGrotesque_800ExtraBold.ttf) format("truetype"); }
   @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url(fonts/IBMPlexMono_600SemiBold.ttf) format("truetype"); }
@@ -14,18 +14,21 @@
     --bg: #F5F4F0; --surface: #FFFFFF; --text: #17181C; --muted: #5D6068; --border: #E2E0D9;
     --kopf: #4F46E5; --koerper: #E8541E; --koennen: #1F6B4A;
     --kopf-soft: #EEF0FF; --koerper-soft: #FDEEE7; --koennen-soft: #E6F2EC;
+    --teller: #9A6212; --teller-soft: #FBF1DC;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #0E1013; --surface: #171A1F; --text: #ECEDEF; --muted: #9EA2AB; --border: #2A2E35;
       --kopf: #A5B4FC; --koerper: #FF8A5B; --koennen: #6FCF9F;
       --kopf-soft: #1E2140; --koerper-soft: #3A1E14; --koennen-soft: #13291F;
+      --teller: #F2C14E; --teller-soft: #33270F;
     }
   }
   :root[data-theme="dark"] {
     --bg: #0E1013; --surface: #171A1F; --text: #ECEDEF; --muted: #9EA2AB; --border: #2A2E35;
     --kopf: #A5B4FC; --koerper: #FF8A5B; --koennen: #6FCF9F;
     --kopf-soft: #1E2140; --koerper-soft: #3A1E14; --koennen-soft: #13291F;
+    --teller: #F2C14E; --teller-soft: #33270F;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 400 17px/1.6 "IBM Plex Sans", system-ui, sans-serif; }
@@ -39,11 +42,12 @@
   .lead { font-size: 20px; color: var(--muted); max-width: 640px; margin: 20px 0 0; }
   .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
   .pill { border: 1px solid var(--border); border-radius: 999px; padding: 4px 14px; font-size: 14px; font-weight: 500; background: var(--surface); }
-  .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 48px; }
+  .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 48px; }
   .app { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px; border-top: 6px solid var(--accent); }
   .app.kopf { --accent: var(--kopf); --soft: var(--kopf-soft); }
   .app.koerper { --accent: var(--koerper); --soft: var(--koerper-soft); }
   .app.koennen { --accent: var(--koennen); --soft: var(--koennen-soft); }
+  .app.teller { --accent: var(--teller); --soft: var(--teller-soft); }
   .role { font: 500 13px "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
   .app p { margin: 0; color: var(--muted); }
   .app ul { margin: 0; padding-left: 18px; font-size: 15px; }
@@ -55,7 +59,7 @@
   .links { display: grid; gap: 12px; }
   .link { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px; }
   .flow { font: 500 14px "IBM Plex Mono", monospace; white-space: nowrap; }
-  .flow .k { color: var(--kopf); } .flow .e { color: var(--koerper); } .flow .m { color: var(--koennen); }
+  .flow .k { color: var(--kopf); } .flow .e { color: var(--koerper); } .flow .m { color: var(--koennen); } .flow .t { color: var(--teller); }
   .link p { margin: 0; }
   .state { font: 500 12px "IBM Plex Mono", monospace; color: var(--muted); grid-column: 2; }
   .state.live { color: var(--koennen); }
@@ -77,7 +81,7 @@
 <body>
 <main>
   <h1><span class="a">Kopf</span> <span class="dot">·</span> <span class="b">Körper</span> <span class="dot">·</span> <span class="c">Können</span></h1>
-  <p class="lead">Drei kleine Android-Apps, die jede für sich funktionieren und zusammen ein persönliches System ergeben: organisieren, trainieren, dazulernen.</p>
+  <p class="lead">Vier kleine Android-Apps, die jede für sich funktionieren und zusammen ein persönliches System ergeben: organisieren, trainieren, gut essen, dazulernen.</p>
   <div class="pills">
     <span class="pill">offline</span><span class="pill">kein Konto</span><span class="pill">Claude-Verbindung optional</span><span class="pill">keine Werbung</span><span class="pill">Deutsch</span>
   </div>
@@ -111,6 +115,21 @@
         <a class="btn" href="https://github.com/Fymisterion/app-landschaft/releases/download/eigengewicht-v0.1.0/Eigengewicht.apk">APK laden · 45 MB</a>
       </div>
       <span class="meta">Vorschau 0.1.0 · ab Android 7 · 64-Bit</span>
+    </article>
+
+    <article class="app teller">
+      <span class="role">Körper · ernähren</span>
+      <h3>Teller</h3>
+      <p>Ernährungstagebuch und Rezeptbuch: Kalorien und Makros im Blick, Lieblingsrezepte immer dabei.</p>
+      <ul>
+        <li>Grundliste offline, Barcode über Open Food Facts</li>
+        <li>Rezepte mit Nährwerten je Portion</li>
+        <li>Claude trägt Mahlzeiten ein und legt Rezepte an</li>
+      </ul>
+      <div class="actions">
+        <a class="btn" href="https://github.com/Fymisterion/app-landschaft/releases/download/teller-v0.1.0/Teller.apk">APK laden · 1,7 MB</a>
+      </div>
+      <span class="meta">Vorschau 0.1.0 · ab Android 8</span>
     </article>
 
     <article class="app koennen">
@@ -152,6 +171,16 @@
       <span class="state live">● verfügbar</span>
     </div>
     <div class="link">
+      <span class="flow"><span class="t">Teller</span> → <span class="k">Kopffrei</span></span>
+      <p>Die Zutaten eines Rezepts landen als Einkaufsliste in Kopffrei – passend zur gewählten Portionenzahl.</p>
+      <span class="state live">● verfügbar</span>
+    </div>
+    <div class="link">
+      <span class="flow"><span class="t">Teller</span> ↔ Claude</span>
+      <p>Über denselben Connector wie Kopffrei: „Ich hatte eine Pizza Funghi“ – Claude schätzt und trägt ein, speichert Rezepte und schreibt die Einkaufsliste direkt als To-Do.</p>
+      <span class="state live">● verfügbar</span>
+    </div>
+    <div class="link">
       <span class="flow"><span class="m">Microstakes</span> → <span class="e">Eigengewicht</span></span>
       <p>Nach langen Sessions schlägt der Coach eine 5-Minuten-Bewegungspause vor.</p>
       <span class="state">○ geplant</span>
@@ -165,7 +194,7 @@
 
   <h2>Gemeinsame Regeln</h2>
   <div class="rules">
-    <div class="rule"><strong>Deine Daten bleiben bei dir</strong><span>Alles liegt auf dem Gerät, Sicherungen sind einfache JSON-Dateien. Nur mit der Claude-Verbindung liegt eine Kopie deiner To-Dos auf deinem eigenen Server.</span></div>
+    <div class="rule"><strong>Deine Daten bleiben bei dir</strong><span>Alles liegt auf dem Gerät, Sicherungen sind einfache JSON-Dateien. Nur mit der Claude-Verbindung liegt eine Kopie deiner To-Dos bzw. deines Ernährungstagebuchs auf deinem eigenen Server.</span></div>
     <div class="rule"><strong>Verbindungen sind sichtbar</strong><span>Eine App öffnet die andere nur, wenn du es auslöst – mit Rückfrage.</span></div>
     <div class="rule"><strong>Jede App steht für sich</strong><span>Keine braucht die anderen. Zusammen werden sie nur besser.</span></div>
   </div>
@@ -176,9 +205,10 @@
     <li>Die Datei öffnen und das Installieren aus dieser Quelle einmalig erlauben.</li>
     <li>In den Android-Einstellungen für Kopffrei „Alarme &amp; Erinnerungen“ erlauben, damit Erinnerungen pünktlich kommen.</li>
   </ol>
-  <p class="meta" style="margin-top:16px">Beide Apps tragen dieselbe Signatur, damit sie sich später direkt Daten zeigen dürfen.</p>
+  <p class="meta" style="margin-top:16px">Alle Apps tragen dieselbe Signatur, damit sie sich später direkt Daten zeigen dürfen.</p>
   <p class="meta">SHA-256 Kopffrei.apk: <code>e1973575c6c64058651545f54a3c57a2756260e0a88bca1c5cda82b8c7085cda</code></p>
   <p class="meta">SHA-256 Eigengewicht.apk: <code>f11f02eef5006bc71ffea0b75e2dd3b40ff9e8bde1482db8ffd7e31bb4223a87</code></p>
+  <p class="meta">SHA-256 Teller.apk: <code>1d0568b81da902b5d03d9a3b4112e3854d2a14af19679853575dc6ca1c678e40</code></p>
 
   <footer>Kopf · Körper · Können – privates Projekt. Keine Analyse, keine Cookies, keine fremden Server auf dieser Seite. Schriften: Bricolage Grotesque und IBM Plex (SIL Open Font License).</footer>
 </main>
