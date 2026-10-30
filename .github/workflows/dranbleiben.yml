@@ -1,0 +1,91 @@
+name: Dranbleiben veröffentlichen
+
+# Baut Dranbleiben aus dem Quellcode (Fymisterio.github.io, Ordner dranbleiben) und hängt Dranbleiben.apk an das Release.
+# Mit den Secrets KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD wird mit dem Familien-Schlüssel signiert,
+# sonst als Vorschau mit einem Debug-Schlüssel.
+
+on:
+  push:
+    paths:
+      - ".github/workflows/dranbleiben.yml"
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "Branch oder Commit des Quellcodes"
+        default: "ccr-bab98cd9-ovo9zh"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_REF: ${{ inputs.source_ref || 'ccr-bab98cd9-ovo9zh' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: Fymisterion/Fymisterio.github.io
+          ref: ${{ env.SOURCE_REF }}
+          path: src
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: "platforms;android-36 build-tools;36.0.0"
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Familien-Schlüssel (falls hinterlegt)
+        working-directory: src/dranbleiben
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/familie.jks"
+            printf 'storeFile=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+              "$RUNNER_TEMP/familie.jks" "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" > keystore.properties
+            echo "SIGNATUR=familie" >> "$GITHUB_ENV"
+          else
+            echo "VORSCHAU=1" >> "$GITHUB_ENV"
+            echo "SIGNATUR=vorschau" >> "$GITHUB_ENV"
+          fi
+
+      - name: Bauen
+        working-directory: src/dranbleiben
+        run: ./gradlew --no-daemon testDebugUnitTest assembleRelease
+
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(grep -oP 'versionName = "\K[^"]+' src/dranbleiben/app/build.gradle.kts)
+          cp src/dranbleiben/app/build/outputs/apk/release/app-release.apk Dranbleiben.apk
+          SHA=$(sha256sum Dranbleiben.apk | cut -d' ' -f1)
+          SIZE=$(du -k Dranbleiben.apk | cut -f1)
+          if [ "$SIGNATUR" = familie ]; then SIGNED="Signiert mit demselben Schlüssel wie Kopffrei und Teller."; else SIGNED="Vorschau mit eigenem Schlüssel signiert – für spätere Updates mit dem Familien-Schlüssel einmal deinstallieren."; fi
+          cat > notes.md <<NOTES
+          Gewohnheiten mit Kalender, Serien und Erinnerungen – Vorschau.
+
+          - Ja/Nein- und messbare Gewohnheiten (kg, Minuten, Schritte …) mit Tagesziel und Wochentagen
+          - Monatskalender mit Serien, Quote und Verlauf
+          - Erinnerungen fragen zur eingestellten Zeit ab, was noch offen ist
+          - Claude-Verbindung über denselben Connector wie Kopffrei und Teller
+
+          Ab Android 8. $SIGNED
+
+          SHA-256: $SHA
+          NOTES
+          sed -i 's/^          //' notes.md
+          TAG="dranbleiben-v$VERSION"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" Dranbleiben.apk --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit "$TAG" --notes-file notes.md --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" Dranbleiben.apk --title "Dranbleiben $VERSION" --notes-file notes.md --target main --repo "$GITHUB_REPOSITORY"
+          fi
+          echo "### Dranbleiben $VERSION ($SIGNATUR) · ${SIZE} KB · SHA-256 \`$SHA\`" >> "$GITHUB_STEP_SUMMARY"
