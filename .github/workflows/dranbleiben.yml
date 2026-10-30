@@ -4,10 +4,8 @@ name: Dranbleiben veröffentlichen
 # Mit den Secrets KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD wird mit dem Familien-Schlüssel signiert,
 # sonst als Vorschau mit einem Debug-Schlüssel.
 
+# Nur von Hand starten (Actions → „Dranbleiben veröffentlichen“ → Run workflow): jeder Lauf ersetzt die APK im Release.
 on:
-  push:
-    paths:
-      - ".github/workflows/dranbleiben.yml"
   workflow_dispatch:
     inputs:
       source_ref:
